@@ -61,7 +61,7 @@ vpr_project/
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/<your-username>/vpr_project.git
+git clone https://github.com/niketa282/vpr_project.git
 cd vpr_project
 ```
 
