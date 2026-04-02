@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from PIL import Image
+import torchvision.transforms as T
 from tqdm import tqdm
 
 '''
@@ -24,9 +26,11 @@ ref_desc - (num_refs, D) One descriptor per reference/DB image
 
 e.g : q_desc -> shape (10, 2048) means -> 10 desccriptor one per image 
 2048 -> each descriptor is a single vector of 2048 numbers
+
+the q_desc and ref_desc are feature vectors or 
+feature embedding i.e  vectors containing numeric representation of the original images
+Hence we get two lists of numbers i.e q_desc, ref_desc that numerically represent the content of an image.
 '''
-
-
 
 def compute_descriptor(query_images, ref_images, model, transform, 
                        batch_size=16, device="cpu"):
@@ -39,6 +43,8 @@ def compute_descriptor(query_images, ref_images, model, transform,
             batch = torch.stack(batch).to(device)
             with torch.no_grad():
                 feats = model(batch)
+                if feats.ndim == 4:
+                    feats = feats.flatten(start_dim=1)
                 feats = nn.functional.normalize(feats, p=2, dim=-1)
             all_desc.append(feats.cpu().numpy())
         return np.concatenate(all_desc, axis=0)
