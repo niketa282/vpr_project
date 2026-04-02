@@ -2,7 +2,7 @@
 from vpr.dataset     import read_images
 from vpr.model       import get_model_resnet50
 from vpr.descriptor  import compute_descriptor
-# from vpr.similarity  import compute_similarity_matrix, save_similarity_matrix
+from vpr.similarity  import compute_similarity_matrix, save_similarity_matrix
 #from vpr.matching    import match
 #from vpr.metrics     import compute_precision_recall
 #from vpr.evaluation  import evaluate, print_metrics
@@ -27,8 +27,8 @@ def main():
     assert query_descriptors.shape[0] == len(query_images), "query count mismatch — unpacking may be swapped"
     assert ref_descriptors.shape[0]   == len(ref_images),   "ref count mismatch — unpacking may be swapped"
     
-   # S = compute_similarity_matrix(ref_descriptors, query_descriptors)
-   # save_similarity_matrix(S, path="vpr_output/similarity_matrix.npy")
+    S = compute_similarity_matrix(ref_descriptors, query_descriptors)
+    save_similarity_matrix(S, path="vpr_output/similarity_matrix.npy")
 
     # matches = match(S, top_k=10)
     # precision_at_k, recall_at_k = compute_precision_recall(matches, top_k=10)
