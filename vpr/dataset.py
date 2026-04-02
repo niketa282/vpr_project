@@ -1,11 +1,4 @@
 from pathlib import Path
-from PIL import Image
-import torchvision.transforms as T
-
-'''
-PIL - import name for Pillow
-PIL - Python Imaging Library - used for converting, manipulating image files.
-'''
 
 IMG_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
