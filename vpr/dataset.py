@@ -2,6 +2,11 @@ from pathlib import Path
 from PIL import Image
 import torchvision.transforms as T
 
+'''
+PIL - import name for Pillow
+PIL - Python Imaging Library - used for converting, manipulating image files.
+'''
+
 IMG_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 def read_images(db_dir="dataset/database", query_dir="dataset/queries", img_size=322):
