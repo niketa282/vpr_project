@@ -9,7 +9,7 @@ from vpr.descriptor  import compute_descriptor
 
 def main():
     query_images, ref_images = read_images()
-    # query_descriptor, ref_descriptors = compute_descriptor(query_images, ref_images)
+    query_descriptor, ref_descriptors = compute_descriptor(query_images, ref_images)
     
     # S = compute_similarity_matrix(ref_descriptors, query_descriptor)
     # matches = match(S, top_k=10)
