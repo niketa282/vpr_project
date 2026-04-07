@@ -14,6 +14,13 @@ Returns:
            +1.0  →  identical descriptors (perfect match)
             0.0  →  orthogonal (unrelated)
            -1.0  →  opposite   (very different)
+
+Cosine similarity has range between -1 and 1.
+E.g if cosine similarity is -1 two vectors are very different
+if 1 then they are identical.
+
+Similarity matrix 'S' is square matrix that telly you
+cosine similarity between every single query image and every reference image 
 """
 def compute_similarity_matrix(
     ref_descriptors:   np.ndarray,     # (N_db, 2048)  — from ResNet50
@@ -35,12 +42,6 @@ def compute_similarity_matrix(
     ref_norm   = ref_descriptors   / (np.linalg.norm(ref_descriptors,   axis=1, keepdims=True) + 1e-8)
     query_norm = query_descriptors / (np.linalg.norm(query_descriptors, axis=1, keepdims=True) + 1e-8)
 
-    # ── Core operation: one matrix multiply gives ALL pairwise similarities ───
-    #    ref_norm   : (N_db, D)
-    #    query_norm : (N_q,  D)  →  .T gives (D, N_q)
-    #    result S   : (N_db, N_q)
-   # The function computes cosine similarity between every query image and 
-   # every reference image in one matrix multiply. The output is a 2D grid of similarity scores.
     S = ref_norm @ query_norm.T                        # (N_db, N_q)
 
     # ── Clip to [-1, 1] to correct floating-point drift ──────────────────────
@@ -51,37 +52,34 @@ def compute_similarity_matrix(
     # mean = Average across all 1231×1231 pairs
     print(f"[Similarity] S.shape = {S.shape}  "
           f"min={S.min():.3f}  max={S.max():.3f}  mean={S.mean():.3f}")
+    
+    return S  # (N_db, N_q) — just the matrix, nothing else
 
-    return S
+'''
+S[i][j], will tell you the cosine similiarty between query image i
+ and reference image j. 
+
+To make a place prediction, for query image i, you want to find the most similiar reference image.
+This function is j_match = argmax(S[i][:]) // for a particar query image i, search for all [:] reference images
+and return the one with highest similarity and put that in variable j_max
+
+So this find_match function will 
+tell you that for query image i, the most similar match according
+to model is refernce image j_match.
+'''
 
 
+def find_match(S: np.ndarray) -> np.ndarray:
+    """
+    For each query i, find the reference index with highest similarity.
 
-"""
-Persist the similarity matrix to disk so it can be reused
-without recomputing descriptors.
+    Parameters
+    ----------
+    S : similarity matrix of shape (N_db, N_q)
 
-Args:
-    S:    (N_db, N_q) similarity matrix
-    path: output file path (.npy)
-"""
-def save_similarity_matrix(S: np.ndarray, path: str = "vpr_output/similarity_matrix.npy") -> None:
-
-    import os
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    np.save(path, S)
-    print(f"[Similarity] Saved → {path}  ({S.nbytes / 1e6:.1f} MB)")
-
-   
-   
-"""
-Load a previously saved similarity matrix from disk.
-Args:
-    path: .npy file written by save_similarity_matrix()
-Returns:
-    S: (N_db, N_q) float32
-"""
-def load_similarity_matrix(path: str = "vpr_output/similarity_matrix.npy") -> np.ndarray:
-
-    S = np.load(path).astype(np.float32)
-    print(f"[Similarity] Loaded {path}  shape={S.shape}")
-    return S
+    Returns
+    -------
+    j_match : shape (N_q,) — best reference index for each query
+    """
+    j_match = np.argmax(S, axis=0)   # (N_q,)
+    return j_match
