@@ -113,11 +113,12 @@ python main.py --generate-dummy
 | File | Function | Description |
 |------|----------|-------------|
 | `vpr/dataset.py` | `read_images()` | Loads and preprocesses images from database and query directories |
-| `vpr/descriptor.py` | `compute_descriptor()` | Extracts L2-normalised global descriptors via DINOv2 backbone |
-| `vpr/similarity.py` | `compute_similarity_matrix()` | Builds **S ∈ ℝ\|DB\|×\|Q\|** using cosine similarity |
-| `vpr/matching.py` | `match()` | Returns top-K database candidates per query |
-| `vpr/metrics.py` | `compute_precision_recall()` | Computes Precision\@K and Recall\@K |
-| `vpr/evaluation.py` | `evaluate()`, `print_metrics()` | Full evaluation against ground truth + mAP |
+| `vpr/descriptor.py` | `compute_descriptor()` | Extracts L2-normalised global descriptors by performing a forward pass of images through the 'model' backbone in batches, returning them as NumPy arrays. |
+| `vpr/similarity.py` | `compute_similarity_matrix()` | Builds **S ∈ ℝ\|DB\|×\|Q\|** using cosine similarity | 
+| `vpr/similarity.py` | `find_match` | For each query i, find the reference index with highest similarity | 
+| `vpr/model.py` | `get_model_resnet50` | Model that is used for feature Extraction | 
+| `vpr/evaluate.py` | `get_gt_labels()` | Extract ground truth from VPR dataset |
+| `vpr/evaluate.py` | `evaluate_matches()` | Calculate Evaluation metric - Recall@1|
 
 ---
 
