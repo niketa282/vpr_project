@@ -68,7 +68,9 @@ tell you that for query image i, the most similar match according
 to model is refernce image j_match.
 '''
 
-
+# J-match effectively answers the following question
+# For every query it looks at the similarity scores and picks the single
+# image index with highest score
 def find_match(S: np.ndarray) -> np.ndarray:
     """
     For each query i, find the reference index with highest similarity.

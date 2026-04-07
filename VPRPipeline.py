@@ -3,9 +3,7 @@ from vpr.dataset     import read_images
 from vpr.model       import get_model_resnet50
 from vpr.descriptor  import compute_descriptor
 from vpr.similarity  import compute_similarity_matrix, find_match
-#from vpr.matching    import match
-#from vpr.metrics     import compute_precision_recall
-#from vpr.evaluation  import evaluate, print_metrics
+from vpr.evaluate    import get_gt_labels, evaluate_matches
 
 '''
 This is a Single-Stage VPR pipeline
@@ -56,10 +54,13 @@ def main():
 
     print(f'j_match shape   = { j_match.shape}')    # expect (N_q,)
 
-# matches = match(S, top_k=10)
+    db_folder    = "dataset/database"
+    query_folder= "dataset/queries"
+    gt_labels = get_gt_labels(db_folder, query_folder)
+    
+    results = evaluate_matches(j_match, gt_labels, tolerance=0)
+
 # precision_at_k, recall_at_k = compute_precision_recall(matches, top_k=10)
-# metrics = evaluate(matches, ground_truth=None, ks=[1, 5, 10])
-# print_metrics(metrics)
 
 if __name__ == "__main__":
     main()
